@@ -20,6 +20,7 @@ typedef struct Cliente {
 void CargarCLientes(Cliente * ListaClientes, char ** Tipos, int Cantidad);
 void CargarProducto(Producto * ProdPedido, char ** Tipos, int ID);
 void MostrarLista(Cliente * Lista, int Cantidad);
+float CostoTotalProducto(Producto * Product);
 
 int main () {
     int CantidadClientes;
@@ -86,7 +87,7 @@ void CargarProducto(Producto * ProdPedido, char ** Tipos, int ID) {
     ProdPedido->ProductoID = ID;
     ProdPedido->Cantidad = 1 + rand() % 10;
     ProdPedido->TipoProducto = *(Tipos+aux);
-    ProdPedido->PrecioUnitario = (1000 + rand() % 9001)/100;
+    ProdPedido->PrecioUnitario = (1000 + (float)(rand() % 9001)) / 100;
 }
 
 //Función para mostrar lista de Clientes
@@ -96,6 +97,8 @@ void MostrarLista(Cliente * Lista, int Cantidad) {
     
     for (int i = 0; i < Cantidad; i++)
     {
+        float TotalAPagar = 0;
+
         printf("\n---------- Cliente Nro %d ----------\n", i + 1);
         printf("Nombre: %s\n", Lista[i].NombreCliente);
         printf("ID Nro: %d\n", Lista[i].ClienteID);
@@ -109,6 +112,21 @@ void MostrarLista(Cliente * Lista, int Cantidad) {
             printf("Tipo de producto: ");
             puts(Lista[i].Productos[j].TipoProducto);
             printf("Precio unitario = $%.2f\n", Lista[i].Productos[j].PrecioUnitario);
-        }//for end        
+
+            //Calcular Precio total del producto
+            printf("Costo total = $%.2f\n", CostoTotalProducto(&(Lista[i].Productos[j])));
+
+            //Calcular total a pagar por el cliente
+            TotalAPagar += CostoTotalProducto(&(Lista[i].Productos[j]));
+        }//for end
+
+        printf("------------------------------\n");
+        printf("\nTotal a pagar del cliente Nro %d = $%.2f\n", i + 1, TotalAPagar);
+        printf("\n------------------------------\n");
     }//for end    
+}
+
+//Función para calcular el costo total de un producto
+float CostoTotalProducto(Producto * Product) {
+    return (Product->Cantidad * Product->PrecioUnitario);
 }
